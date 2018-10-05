@@ -1,0 +1,96 @@
+.syntax unified
+.cpu    cortex-m0
+.thumb
+
+.global g_pfnVectors
+.global Default_Handler
+
+/**
+ * @brief Symbol for determining address of .data section initial values block.
+ */
+.word _data_values_start
+
+/**
+ * @brief Symbol for determining start address of .data section.
+ */
+.word _data_start
+
+/**
+ * @brief Symbol for end address of .data section.
+ */
+.word _data_end
+
+/**
+ * @brief Symbol for determining start address of .bss section.
+ */
+.word _bss_start
+
+/**
+ * @brief Symbol for end address of .bss section.
+ */
+.word _bss_end
+
+/**
+ * @brief Application entry code.
+ *
+ * CPU starts execution from here just after reset. This routine prepares static
+and global variables. Then jump to main() is performed and user application
+begins execution.
+ */
+.section .text.Reset_Handler
+.weak    Reset_Handler,
+.type    Reset_Handler, %function
+Reset_Handler:
+    /* Set SP to the end of RAM. */
+    ldr   r0, =_RAM_END
+    mov   sp, r0
+
+    /* Copy data segment initial values from Flash to RAM. */
+    ldr   r0, =_data_start
+    ldr   r1, =_data_end
+    ldr   r2, =_data_values_start
+    movs  r3, #0
+
+    /* R1 contains bytes to copy. */
+    subs  r1, r2, r1
+
+    b     copy_data_check
+
+copy_data_loop:
+    ldr   r4, [r2, r3]
+    str   r4, [r0, r3]
+    adds  r3, #4
+
+copy_data_check:
+    cmp   r3, r1
+    bcc   copy_data_loop
+
+    /* Zero fill BSS section. */
+    ldr   r0, =_bss_start
+    ldr   r1, =_bss_end
+    movs  r2, #0
+    b     zero_bss_check
+
+zero_bss_loop:
+    str   r2, [r0]
+    adds  r0, #4
+
+zero_bss_check:
+    cmp   r0, r1
+    bcc   zero_bss_loop
+
+/* Call user application main() */
+    b     main
+
+.size Reset_Handler, .-Reset_Handler
+
+/**
+ * brief Function for catching default interrupts.
+ *
+ * Any interrupt handler not overriden explicitely will be trapped inside this function for debugger to examine.
+ */
+.section .text.Default_Handler,"ax",%progbits
+Default_Handler:
+    b   Default_Handler
+.size     Default_Handler, .-Default_Handler
+
