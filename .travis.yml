@@ -1,0 +1,15 @@
+language: bash
+
+install:
+    - git config remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
+    - git fetch
+
+script:
+    - echo "Creating nightly branch"
+    - git checkout nightly
+    - git rev-parse origin/master | awk '{cmd="git reset --hard "; print cmd $1}' | bash
+    - git merge origin/feature/nk5-prepare-gpio-hal-unit-tests
+    - git merge origin/feature/nk10-implement-rcc-hal
+    - git merge origin/feature/nk11-implement-tim-hal
+    - git merge origin/feature/nk13-implement-usart-drv
+    - git push -f https://${USERNAME}:${GITHUB_API_KEY}@${GH_REF} HEAD:nightly
