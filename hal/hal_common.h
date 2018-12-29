@@ -12,6 +12,8 @@
     #error "No STM32 series defined"
 #endif
 
+#include <hal_instances.h>
+
 /**
  * @brief Macro for calculating array element count.
  *
