@@ -4,6 +4,20 @@
 #include <hal_common.h>
 #include <hal_rcc.h>
 
+#if defined(USART_RDR_RDR) && defined(USART_TDR_TDR)
+    #define HAL_USART_TX_REG TDR
+    #define HAL_USART_RX_REG RDR
+#elif defined(USART_DR_DR)
+    #define HAL_USART_TX_REG DR
+    #define HAL_USART_RX_REG DR
+#endif
+
+#if defined(USART_ISR_RXNE_Msk)
+    #define HAL_USART_STATUS_REG ISR
+#elif defined(USART_SR_RXNE_Msk)
+    #define HAL_USART_STATUS_REG SR
+#endif
+
 typedef enum
 {
     HAL_USART_BAUD_9600   = 9600U,
@@ -182,20 +196,12 @@ __STATIC_INLINE void hal_usart_int_disable(USART_TypeDef * p_usart, hal_usart_in
 
 __STATIC_INLINE bool hal_usart_evt_check(USART_TypeDef const * p_usart, hal_usart_evt_t evt)
 {
-#if defined(USART_ISR_RXNE_Msk)
-    return (bool)(p_usart->ISR & (uint32_t)evt);
-#elif defined(USART_SR_RXNE_Msk)
-    return (bool)(p_usart->SR & (uint32_t)evt);
-#endif
+    return (bool)(p_usart->HAL_USART_STATUS_REG & (uint32_t)evt);
 }
 
 __STATIC_INLINE uint32_t hal_usart_evt_mask_get(USART_TypeDef const * p_usart)
 {
-#if defined(USART_ISR_RXNE_Msk)
-    return (uint32_t)p_usart->ISR;
-#elif defined(USART_SR_RXNE_Msk)
-    return (uint32_t)p_usart->SR;
-#endif
+    return (uint32_t)p_usart->HAL_USART_STATUS_REG;
 }
 
 __STATIC_INLINE void hal_usart_evt_clear(USART_TypeDef * p_usart, hal_usart_evt_t evt)
@@ -205,20 +211,20 @@ __STATIC_INLINE void hal_usart_evt_clear(USART_TypeDef * p_usart, hal_usart_evt_
         case HAL_USART_EVT_TC:
         {
             // cleared by writing '0'
-            p_usart->SR &= ~HAL_USART_EVT_TC;
+            p_usart->HAL_USART_STATUS_REG &= ~HAL_USART_EVT_TC;
             break;
         }
         case HAL_USART_EVT_RX:
         {
             // cleared by writing '0'
-            p_usart->SR &= ~HAL_USART_EVT_RX;
+            p_usart->HAL_USART_STATUS_REG &= ~HAL_USART_EVT_RX;
             break;
         }
         case HAL_USART_EVT_OVERRUN:
         {
             // cleared by software sequence
-            uint32_t volatile dummy_read = p_usart->SR;
-            dummy_read = p_usart->DR;
+            uint32_t volatile dummy_read = hal_usart_evt_mask_get(p_usart);
+            dummy_read = hal_usart_byte_rx(p_usart);
             (void)dummy_read;
         }
         default: break;
@@ -227,20 +233,12 @@ __STATIC_INLINE void hal_usart_evt_clear(USART_TypeDef * p_usart, hal_usart_evt_
 
 __STATIC_INLINE uint8_t hal_usart_byte_rx(USART_TypeDef const * p_usart)
 {
-#if defined(USART_RDR_RDR)
-    return (uint8_t)(p_usart->RDR);
-#elif defined(USART_DR_DR)
-    return (uint8_t)(p_usart->DR);
-#endif
+    return (uint8_t)(p_usart->HAL_USART_RX_REG);
 }
 
 __STATIC_INLINE void hal_usart_byte_tx(USART_TypeDef * p_usart, uint8_t byte)
 {
-#if defined(USART_TDR_TDR)
-    p_usart->TDR = byte;
-#elif defined(USART_DR_DR)
-    p_usart->DR = byte;
-#endif
+    p_usart->HAL_USART_TX_REG = byte;
 }
 
 #endif // __MOCK_HAL
