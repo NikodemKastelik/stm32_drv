@@ -13,6 +13,8 @@ __STATIC_INLINE void hal_rcc_enable(hal_rcc_periph_t periph_msk);
 
 __STATIC_INLINE void hal_rcc_apb_periph_enable(volatile uint32_t * p_periph);
 
+__STATIC_INLINE uint32_t hal_rcc_apb_clock_get(void);
+
 #ifndef __MOCK_HAL
 
 __STATIC_INLINE void hal_rcc_enable(hal_rcc_periph_t periph_msk)
