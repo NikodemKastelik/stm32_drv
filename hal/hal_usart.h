@@ -91,6 +91,30 @@ typedef enum
 #endif
 } hal_usart_evt_t;
 
+__STATIC_INLINE void hal_usart_init(USART_TypeDef * p_usart);
+
+__STATIC_INLINE void hal_usart_uninit(USART_TypeDef * p_usart);
+
+__STATIC_INLINE void hal_usart_baudrate_set(USART_TypeDef * p_usart, hal_usart_baud_t baud);
+
+__STATIC_INLINE void hal_usart_parity_set(USART_TypeDef * p_usart, hal_usart_parity_t parity);
+
+__STATIC_INLINE void hal_usart_stopbits_set(USART_TypeDef * p_usart, hal_usart_stopbits_t stopbits);
+
+__STATIC_INLINE void hal_usart_start(USART_TypeDef * p_usart);
+
+__STATIC_INLINE void hal_usart_stop(USART_TypeDef * p_usart);
+
+__STATIC_INLINE void hal_usart_tx_enable(USART_TypeDef * p_usart);
+
+__STATIC_INLINE void hal_usart_tx_disable(USART_TypeDef * p_usart);
+
+__STATIC_INLINE void hal_usart_rx_enable(USART_TypeDef * p_usart);
+
+__STATIC_INLINE void hal_usart_rx_disable(USART_TypeDef * p_usart);
+
+__STATIC_INLINE void hal_usart_hfctrl_enable(USART_TypeDef * p_usart);
+
 __STATIC_INLINE void hal_usart_cfg(USART_TypeDef *     p_periph,
                                   hal_usart_baud_t     baud,
                                   hal_usart_stopbits_t stopbits,
@@ -103,6 +127,8 @@ __STATIC_INLINE void hal_usart_int_disable(USART_TypeDef * p_usart, hal_usart_in
 __STATIC_INLINE bool hal_usart_evt_check(USART_TypeDef const * p_usart, hal_usart_evt_t evt);
 
 __STATIC_INLINE uint32_t hal_usart_evt_mask_get(USART_TypeDef const * p_usart);
+
+__STATIC_INLINE void hal_usart_evt_clear(USART_TypeDef * p_usart, hal_usart_evt_t evt);
 
 __STATIC_INLINE uint8_t hal_usart_byte_rx(USART_TypeDef const * p_usart);
 
