@@ -3,6 +3,12 @@
 
 #include <hal_common.h>
 
+__STATIC_INLINE void hal_dwt_init();
+
+__STATIC_INLINE void hal_dwt_delay_us(uint32_t us);
+
+#ifndef __MOCK_HAL
+
 __STATIC_INLINE void hal_dwt_init()
 {
     CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
@@ -14,5 +20,7 @@ __STATIC_INLINE void hal_dwt_delay_us(uint32_t us)
     uint32_t target_tick = DWT->CYCCNT + us * (16000000 / 1000000);
     while (DWT->CYCCNT <= target_tick);
 }
+
+#endif // __MOCK_HAL
 
 #endif // _HAL_DWT_H_
