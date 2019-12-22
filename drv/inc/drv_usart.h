@@ -1,7 +1,7 @@
 #ifndef _DRV_USART_H_
 #define _DRV_USART_H_
 
-#define DRV_CONFIG_USART2_ENABLED  1
+#define DRV_CONFIG_USART1_ENABLED  1
 
 #include <hal_usart.h>
 
