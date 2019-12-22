@@ -153,6 +153,13 @@ static void usart_irq_handler(drv_usart_inst_idx_t idx)
     }
 }
 
+#if DRV_CONFIG_USART1_ENABLED
+void USART1_Handler(void)
+{
+    usart_irq_handler(DRV_USART_INST1_IDX);
+}
+#endif
+
 #if DRV_CONFIG_USART2_ENABLED
 void USART2_Handler(void)
 {
