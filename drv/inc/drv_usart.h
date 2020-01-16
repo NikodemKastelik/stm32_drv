@@ -1,8 +1,7 @@
 #ifndef _DRV_USART_H_
 #define _DRV_USART_H_
 
-#define DRV_CONFIG_USART1_ENABLED  1
-
+#include <drv_common.h>
 #include <hal_usart.h>
 
 #define DRV_USART_INSTANCE_GET(x)             \
