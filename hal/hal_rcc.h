@@ -3,7 +3,13 @@
 
 #include <hal_common.h>
 
-#define HAL_RCC_BUS_BASEADDR_MSK  0xFFFF0000
+#define HAL_RCC_BUS_APB_INDEX_MSK  0x000F0000
+
+#define HAL_RCC_BUS_APB_INDEX_POS  16
+
+#define HAL_RCC_BUS_APB1_INDEX  (0 << HAL_RCC_BUS_APB_INDEX_POS)
+
+#define HAL_RCC_BUS_APB2_INDEX  (1 << HAL_RCC_BUS_APB_INDEX_POS)
 
 #define HAL_RCC_PERIPH_BASEADDR_MSK  0x0000FFFF
 
@@ -49,24 +55,15 @@ __STATIC_INLINE void hal_rcc_enable(hal_rcc_periph_t periph_msk)
 
 __STATIC_INLINE void hal_rcc_apb_periph_enable(volatile uint32_t * p_periph)
 {
-    uint32_t bus_baseaddr = (uint32_t)p_periph & HAL_RCC_BUS_BASEADDR_MSK;
+    uint32_t bus_index = ((uint32_t)p_periph & HAL_RCC_BUS_APB_INDEX_MSK);
     uint32_t rcc_bit_pos = ((uint32_t)p_periph & HAL_RCC_PERIPH_BASEADDR_MSK) /
                            HAL_RCC_PERIPH_BASEADDR_OFFSET;
-    uint32_t volatile * rcc_reg;
 
-    switch(bus_baseaddr)
+    switch (bus_index)
     {
-#if defined(APB1PERIPH_BASE)
-        case APB1PERIPH_BASE: rcc_reg = (uint32_t volatile *)&RCC->APB1ENR; break;
-#endif
-#if defined(APB2PERIPH_BASE)
-        case APB2PERIPH_BASE: rcc_reg = (uint32_t volatile *)&RCC->APB2ENR; break;
-#endif
-        default: rcc_reg = NULL;
+        case HAL_RCC_BUS_APB1_INDEX: p_rcc->APB1ENR |= (1 << rcc_bit_pos); break;
+        case HAL_RCC_BUS_APB2_INDEX: p_rcc->APB2ENR |= (1 << rcc_bit_pos); break;
     }
-
-    ASSERT(rcc_reg);
-    *rcc_reg |= 1 << rcc_bit_pos;
 }
 
 __STATIC_INLINE uint32_t hal_rcc_apb_clock_get(void)
