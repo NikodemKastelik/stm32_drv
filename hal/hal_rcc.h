@@ -15,15 +15,15 @@
 
 #define HAL_RCC_PERIPH_BASEADDR_OFFSET  0x0400
 
-__STATIC_INLINE void hal_rcc_enable(hal_rcc_periph_t periph_msk);
+__STATIC_INLINE void hal_rcc_enable(RCC_TypeDef * p_rcc, hal_rcc_periph_t periph_msk);
 
-__STATIC_INLINE void hal_rcc_apb_periph_enable(volatile uint32_t * p_periph);
+__STATIC_INLINE void hal_rcc_apb_periph_enable(RCC_TypeDef * p_rcc, void * p_periph);
 
-__STATIC_INLINE uint32_t hal_rcc_apb_clock_get(void);
+__STATIC_INLINE uint32_t hal_rcc_apb_clock_get(RCC_TypeDef * p_rcc);
 
 #ifndef __MOCK_HAL
 
-__STATIC_INLINE void hal_rcc_enable(hal_rcc_periph_t periph_msk)
+__STATIC_INLINE void hal_rcc_enable(RCC_TypeDef * p_rcc, hal_rcc_periph_t periph_msk)
 {
     uint32_t bus_msk     = periph_msk >> HAL_RCC_BUS_BITPOS;
     uint32_t rcc_bit_msk = 1 << (periph_msk &  HAL_RCC_PERIPH_BITPOS_MSK);
@@ -53,7 +53,7 @@ __STATIC_INLINE void hal_rcc_enable(hal_rcc_periph_t periph_msk)
     *rcc_reg |= rcc_bit_msk;
 }
 
-__STATIC_INLINE void hal_rcc_apb_periph_enable(volatile uint32_t * p_periph)
+__STATIC_INLINE void hal_rcc_apb_periph_enable(RCC_TypeDef * p_rcc, void * p_periph)
 {
     uint32_t bus_index = ((uint32_t)p_periph & HAL_RCC_BUS_APB_INDEX_MSK);
     uint32_t rcc_bit_pos = ((uint32_t)p_periph & HAL_RCC_PERIPH_BASEADDR_MSK) /
@@ -66,8 +66,9 @@ __STATIC_INLINE void hal_rcc_apb_periph_enable(volatile uint32_t * p_periph)
     }
 }
 
-__STATIC_INLINE uint32_t hal_rcc_apb_clock_get(void)
+__STATIC_INLINE uint32_t hal_rcc_apb_clock_get(RCC_TypeDef * p_rcc)
 {
+    (void)p_rcc;
 #if defined(STM32_SERIES_F0)
     return 8000000;
 #else
