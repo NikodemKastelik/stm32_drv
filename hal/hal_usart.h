@@ -138,7 +138,7 @@ __STATIC_INLINE void hal_usart_byte_tx(USART_TypeDef * p_usart, uint8_t byte);
 
 __STATIC_INLINE void hal_usart_init(USART_TypeDef * p_usart)
 {
-    hal_rcc_apb_periph_enable((volatile uint32_t *)p_usart);
+    hal_rcc_apb_periph_enable(RCC, p_usart);
 }
 
 __STATIC_INLINE void hal_usart_uninit(USART_TypeDef * p_usart)
@@ -148,7 +148,7 @@ __STATIC_INLINE void hal_usart_uninit(USART_TypeDef * p_usart)
 
 __STATIC_INLINE void hal_usart_baudrate_set(USART_TypeDef * p_usart, hal_usart_baud_t baud)
 {
-    p_usart->BRR = hal_rcc_apb_clock_get() / (uint32_t)baud;
+    p_usart->BRR = hal_rcc_apb_clock_get(RCC) / (uint32_t)baud;
 }
 
 __STATIC_INLINE void hal_usart_parity_set(USART_TypeDef * p_usart, hal_usart_parity_t parity)
@@ -201,7 +201,7 @@ __STATIC_INLINE void hal_usart_cfg(USART_TypeDef *     p_usart,
                                   hal_usart_stopbits_t stopbits,
                                   hal_usart_parity_t   parity)
 {
-    p_usart->BRR = hal_rcc_apb_clock_get() / baud;
+    p_usart->BRR = hal_rcc_apb_clock_get(RCC) / baud;
 
     p_usart->CR2 = (uint32_t)stopbits;
 
