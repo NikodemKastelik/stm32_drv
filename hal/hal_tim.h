@@ -116,7 +116,7 @@ __STATIC_INLINE void hal_tim_timer_cfg(TIM_TypeDef * p_tim,
                                        uint32_t      freq_hz,
                                        uint32_t      period_ticks)
 {
-    uint32_t apb_clock = hal_rcc_apb_clock_get();
+    uint32_t apb_clock = hal_rcc_apb_clock_get(RCC);
     p_tim->PSC = (apb_clock / freq_hz) - 1;
     p_tim->ARR = period_ticks - 1;
 }
