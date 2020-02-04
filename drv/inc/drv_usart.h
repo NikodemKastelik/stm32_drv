@@ -64,4 +64,6 @@ void drv_usart_rx(drv_usart_t * usart, uint8_t * buf, uint32_t len);
 
 bool drv_usart_tx_ongoing_check(drv_usart_t * usart);
 
+void drv_usart_irq_handler(drv_usart_inst_idx_t idx);
+
 #endif // _DRV_USART_H_
