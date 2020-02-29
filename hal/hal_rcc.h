@@ -19,6 +19,8 @@ __STATIC_INLINE void hal_rcc_enable(RCC_TypeDef * p_rcc, hal_rcc_periph_t periph
 
 __STATIC_INLINE void hal_rcc_apb_periph_enable(RCC_TypeDef * p_rcc, void * p_periph);
 
+__STATIC_INLINE void hal_rcc_gpio_enable(RCC_TypeDef * p_rcc, GPIO_TypeDef * p_gpio);
+
 __STATIC_INLINE uint32_t hal_rcc_apb_clock_get(RCC_TypeDef * p_rcc);
 
 #ifndef __MOCK_HAL
@@ -64,6 +66,17 @@ __STATIC_INLINE void hal_rcc_apb_periph_enable(RCC_TypeDef * p_rcc, void * p_per
         case HAL_RCC_BUS_APB1_INDEX: p_rcc->APB1ENR |= (1 << rcc_bit_pos); break;
         case HAL_RCC_BUS_APB2_INDEX: p_rcc->APB2ENR |= (1 << rcc_bit_pos); break;
     }
+}
+
+__STATIC_INLINE void hal_rcc_gpio_enable(RCC_TypeDef * p_rcc, GPIO_TypeDef * p_gpio)
+{
+    uint32_t gpio_index = ((uint32_t)p_gpio - (uint32_t)GPIOA) / HAL_RCC_PERIPH_BASEADDR_OFFSET;
+
+#if defined(RCC_AHBENR_GPIOAEN_Pos)
+    p_rcc->AHBENR  |= (1 << (gpio_index + RCC_AHBENR_GPIOAEN_Pos));
+#elif defined(RCC_AHB1ENR_GPIOAEN_Pos)
+    p_rcc->AHB1ENR |= (1 << (gpio_index + RCC_AHB1ENR_GPIOAEN_Pos));
+#endif
 }
 
 __STATIC_INLINE uint32_t hal_rcc_apb_clock_get(RCC_TypeDef * p_rcc)
