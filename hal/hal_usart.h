@@ -232,6 +232,9 @@ __STATIC_INLINE uint32_t hal_usart_evt_mask_get(USART_TypeDef const * p_usart)
 
 __STATIC_INLINE void hal_usart_evt_clear(USART_TypeDef * p_usart, hal_usart_evt_t evt)
 {
+#if defined(USART_ICR_TCCF_Msk)
+    p_usart->ICR = (uint32_t)evt;
+#else
     switch(evt)
     {
         case HAL_USART_EVT_TC:
@@ -255,6 +258,7 @@ __STATIC_INLINE void hal_usart_evt_clear(USART_TypeDef * p_usart, hal_usart_evt_
         }
         default: break;
     }
+#endif
 }
 
 __STATIC_INLINE uint8_t hal_usart_byte_rx(USART_TypeDef const * p_usart)
